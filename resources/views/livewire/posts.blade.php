@@ -1,26 +1,11 @@
 <div>
-    <flux:modal.trigger name="edit-profile">
-    <flux:button>Edit profile</flux:button>
+    <flux:modal.trigger name="create-posts">
+    <flux:button>Ajouter un post</flux:button>
 </flux:modal.trigger>
-
-<flux:modal name="edit-profile" class="md:w-96">
-    <div class="space-y-6">
-        <div>
-            <flux:heading size="lg">Update profile</flux:heading>
-            <flux:subheading>Make changes to your personal details.</flux:subheading>
-        </div>
-
-        <flux:input label="Name" placeholder="Your name" />
-
-        <flux:input label="Date of birth" type="date" />
-
-        <div class="flex">
-            <flux:spacer />
-
-            <flux:button type="submit" variant="primary">Save changes</flux:button>
-        </div>
-    </div>
-</flux:modal>
+{{-- appel du livewire  meme chose avec @livewire('post-create') --}}
+    <livewire:post-create>
+    {{-- fin appel --}}
+    <br>
    <div class="overflow-auto">
     <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400" >
         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">

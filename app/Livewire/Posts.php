@@ -4,12 +4,23 @@ namespace App\Livewire;
 
 use App\Models\Post;
 use Livewire\Component;
+use Livewire\Attributes\On;
 
 class Posts extends Component
 {
+    public $posts;
+    public function mount()
+    {
+        $this->posts = Post::all();
+    }
     public function render()
     {
-        $posts = Post::latest()->get();
-        return view('livewire.posts',compact('posts'));
+        return view('livewire.posts');
     }
+   #[On('reloadPost')]
+    public function reloadPost()
+    {
+        $this->posts = Post::all();
+    }
+
 }
