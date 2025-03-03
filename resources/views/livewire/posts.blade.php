@@ -1,9 +1,34 @@
 <div>
     <flux:modal.trigger name="create-posts">
-    <flux:button>Ajouter un post</flux:button>
+    <flux:button variant="primary">Ajouter un post</flux:button>
 </flux:modal.trigger>
 {{-- appel du livewire  meme chose avec @livewire('post-create') --}}
-    <livewire:post-create>
+    <livewire:post-create/>
+    <livewire:post-edit/>
+
+
+<flux:modal name="delete-post" class="min-w-[22rem]">
+    <div class="space-y-6">
+        <div>
+            <flux:heading size="lg">Suprimer le Post?</flux:heading>
+
+            <flux:subheading>
+                <p>Vous etes entrain de vouloir suprimer ce post</p>
+                <p>Cette action n'as pas de retour</p>
+            </flux:subheading>
+        </div>
+
+        <div class="flex gap-2">
+            <flux:spacer />
+
+            <flux:modal.close>
+                <flux:button variant="ghost">Annuler</flux:button>
+            </flux:modal.close>
+
+            <flux:button type="submit" variant="danger" wire:click='destroy'>Suprimer le post</flux:button>
+        </div>
+    </div>
+</flux:modal>
     {{-- fin appel --}}
     <br>
    <div class="overflow-auto">
@@ -23,8 +48,8 @@
                 <td class="px-6 py-4 text-gray-600 dark:text-gray-300">{{ $post->title }}</td>
                 <td class="px-6 py-4 text-gray-600 dark:text-gray-300">{{ $post->body }}</td>
                 <td class="px-6 py-4">
-                    <button wire:click="edit({{ $post->id }})" class="px-4 py-2 text-xs text-white bg-blue-500 rounded hover:bg-blue-700">Edit</button>
-                    <button wire:click="delete({{ $post->id }})" class="px-4 py-2 text-xs text-white bg-red-500 rounded hover:bg-red-700">Delete</button>
+                    <flux:button wire:click="edit({{ $post->id }})" size="sm" variant="primary">Edit</flux:button>
+                    <flux:button wire:click="delete({{ $post->id }})" size="sm" variant="danger">Delete</flux:button>
                 </td>
             </tr>
             @empty
