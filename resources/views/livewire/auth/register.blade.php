@@ -7,13 +7,15 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
+use Livewire\WithFileUploads;
 
 new #[Layout('components.layouts.auth')] class extends Component {
     public string $name = '';
     public string $email = '';
     public string $password = '';
     public string $password_confirmation = '';
-
+    public $photo = '';
+    use WithFileUploads;
     /**
      * Handle an incoming registration request.
      */
@@ -22,11 +24,13 @@ new #[Layout('components.layouts.auth')] class extends Component {
         $validated = $this->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
+            'photo' => ['required', 'image'],
             'password' => ['required', 'string', 'confirmed', Rules\Password::defaults()],
         ]);
 
         $validated['password'] = Hash::make($validated['password']);
-
+        $this->photo->store('photos', 'public');
+        $validated['photo'] = $this->photo->hashName();
         event(new Registered(($user = User::create($validated))));
 
         Auth::login($user);
@@ -43,63 +47,42 @@ new #[Layout('components.layouts.auth')] class extends Component {
 
     <form wire:submit="register" class="flex flex-col gap-6">
         <!-- Name -->
-        <flux:input
-            wire:model="name"
-            id="name"
-            label="{{ __('Name') }}"
-            type="text"
-            name="name"
-            required
-            autofocus
-            autocomplete="name"
-            placeholder="Full name"
-        />
+        <flux:input wire:model="name" id="name" label="{{ __('Name') }}" type="text" name="name" required autofocus
+            autocomplete="name" placeholder="Full name" />
 
         <!-- Email Address -->
-        <flux:input
-            wire:model="email"
-            id="email"
-            label="{{ __('Email address') }}"
-            type="email"
-            name="email"
-            required
-            autocomplete="email"
-            placeholder="email@example.com"
-        />
-
-        <!-- Password -->
-        <flux:input
-            wire:model="password"
-            id="password"
-            label="{{ __('Password') }}"
-            type="password"
-            name="password"
-            required
-            autocomplete="new-password"
-            placeholder="Password"
-        />
-
-        <!-- Confirm Password -->
-        <flux:input
-            wire:model="password_confirmation"
-            id="password_confirmation"
-            label="{{ __('Confirm password') }}"
-            type="password"
-            name="password_confirmation"
-            required
-            autocomplete="new-password"
-            placeholder="Confirm password"
-        />
-
-        <div class="flex items-center justify-end">
-            <flux:button type="submit" variant="primary" class="w-full">
-                {{ __('Create account') }}
-            </flux:button>
+        <flux:input wire:model="email" id="email" label="{{ __('Email address') }}" type="email" name="email" required
+            autocomplete="email" placeholder="email@example.com" />
+        <div class="flex flex-wrap">
+            <div class="w-full md:w-1/2">
+                <!-- photo -->
+                <flux:input wire:model="photo" id="photo" label="{{ __('Choose photo') }}" type="file" name="photo"
+                    required />
+            </div>
+            <div class="w-full md:w-1/2">
+                @if ($photo)
+                <img src="{{ $photo->temporaryUrl() }}" alt="Profile photo" class="w-20 h-20 rounded-full">
+                @endif
         </div>
-    </form>
+</div>
 
-    <div class="space-x-1 text-center text-sm text-zinc-600 dark:text-zinc-400">
-        Already have an account?
-        <flux:link href="{{ route('login') }}" wire:navigate>Log in</flux:link>
-    </div>
+<!-- Password -->
+<flux:input wire:model="password" id="password" label="{{ __('Password') }}" type="password" name="password" required
+    autocomplete="new-password" placeholder="Password" />
+
+<!-- Confirm Password -->
+<flux:input wire:model="password_confirmation" id="password_confirmation" label="{{ __('Confirm password') }}"
+    type="password" name="password_confirmation" required autocomplete="new-password" placeholder="Confirm password" />
+
+<div class="flex items-center justify-end">
+    <flux:button type="submit" variant="primary" class="w-full">
+        {{ __('Create account') }}
+    </flux:button>
+</div>
+</form>
+
+<div class="space-x-1 text-center text-sm text-zinc-600 dark:text-zinc-400">
+    Already have an account?
+    <flux:link href="{{ route('login') }}" wire:navigate>Log in</flux:link>
+</div>
 </div>
